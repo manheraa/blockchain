@@ -4,7 +4,6 @@ openTransaction = []
 owner = "Manhera"
 """Here blockchain is an empty list which forms the chain in future"""
 
-
 def getTheValueOfPreviousBlock():
     """Get the value of previous block"""
     if len(blockchain) < 1:
@@ -24,18 +23,18 @@ def addTransaction(recipent, amount=1.0, sender=owner):
     Transaction = {"Sender": sender, "Recipent": recipent, "Amount": amount}
     openTransaction.append(Transaction)
 
+def hashBlock(block):
+    
+    return "-".join(([str(block[key]) for key in block]))
 
 def mineBlock():
     lastBlock = blockchain[-1]
-    previousHash=""
-    for key in lastBlock:
-        value=lastBlock[key]
-        previousHash=previousHash+str(value)
-    transactions = openTransaction
+    previousHash=hashBlock(lastBlock)
+    print(previousHash)
     block = {
         "Previous-hash": previousHash,
         "Index": len(blockchain),
-        "Transactions": transactions,
+        "Transactions": openTransaction,
     }
     blockchain.append(block)
     
@@ -43,19 +42,14 @@ def mineBlock():
 def verifyChain():
 
     isValid = True
-    for blockIndex in range(len(blockchain)):
-        if blockIndex == 0:
-            blockIndex += 1
+    
+    for (index,block) in enumerate(blockchain): 
+        if index==0:
             continue
-        elif blockchain[blockIndex][0] == blockchain[blockIndex - 1]:
-            isValid = True
-        else:
-            isValid = False
-            break
-        blockIndex += 1
-    return isValid
-
-
+        if block["Previous-hash"]!=hashBlock(blockchain[index-1]):
+            return False
+    
+    return True
 def printBlockchainELements():
     for block in blockchain:
         print("Output Block:")
@@ -88,7 +82,7 @@ while waitingForInput:
         
     elif userChoice == "h":
         if len(blockchain) >= 2:
-            blockchain[0] = [2]
+            blockchain[0] = {"Previous-hash": "", "Index": 0, "Transactions": [{"Sender":"jhon","Recipent":"akjffl","Amount":213}]}
         else:
             print("Not Possible")
     elif userChoice == "q":
@@ -96,10 +90,10 @@ while waitingForInput:
 
     else:
         print("Invalid Choice")
-    #if not verifyChain():
-#
-    #    print("Invalid chain!")
-    #    break
+    if not verifyChain():
+        print("Invalid chain!")
+        break
+
 else:
     print("User Left!")
 print("Completed")
