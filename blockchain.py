@@ -1,4 +1,4 @@
-GenisisBlock = {"Previous-hash": "", "Index": 1, "Transactions": []}
+GenisisBlock = {"Previous-hash": "", "Index": 0, "Transactions": []}
 blockchain = [GenisisBlock]
 openTransaction = []
 owner = "Manhera"
@@ -25,16 +25,20 @@ def addTransaction(recipent, amount=1.0, sender=owner):
     openTransaction.append(Transaction)
 
 
-def addBlock():
+def mineBlock():
     lastBlock = blockchain[-1]
+    previousHash=""
+    for key in lastBlock:
+        value=lastBlock[key]
+        previousHash=previousHash+str(value)
     transactions = openTransaction
     block = {
-        "Previous-hash": "xyz",
+        "Previous-hash": previousHash,
         "Index": len(blockchain),
         "Transactions": transactions,
     }
     blockchain.append(block)
-
+    
 
 def verifyChain():
 
@@ -66,7 +70,7 @@ waitingForInput = True
 while waitingForInput:
     """Choose the value to perform any function"""
     userChoice = input(
-        " 1.To add a new block \n 2.TO print the blocks\n 3.Press h to Manupliate the blockchain \n 4.Press q to exit to exit:"
+        " 1.To add a new block \n 2.TO print the blocks\n 3.Press h to Manupliate the blockchain \n 4.Press 4 to mine a new block \n 5.Press q to exit to exit:"
     )
 
     if userChoice == "1":
@@ -78,7 +82,10 @@ while waitingForInput:
     elif userChoice == "2":
         """This is used to print the blocks"""
         printBlockchainELements()
-
+    elif userChoice=="3":
+        mineBlock()
+        openTransaction=[]
+        
     elif userChoice == "h":
         if len(blockchain) >= 2:
             blockchain[0] = [2]
@@ -89,10 +96,10 @@ while waitingForInput:
 
     else:
         print("Invalid Choice")
-    if not verifyChain():
-
-        print("Invalid chain!")
-        break
+    #if not verifyChain():
+#
+    #    print("Invalid chain!")
+    #    break
 else:
     print("User Left!")
 print("Completed")
