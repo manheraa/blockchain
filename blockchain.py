@@ -1,4 +1,5 @@
-blockchain = []
+GenisisBlock = {"Previous-hash": "", "Index": 1, "Transactions": []}
+blockchain = [GenisisBlock]
 openTransaction = []
 owner = "Manhera"
 """Here blockchain is an empty list which forms the chain in future"""
@@ -18,14 +19,21 @@ def getInput():
     return txRecipent, txAmount
 
 
-def addTransaction(sender, recipent, amount=1.0):
+def addTransaction(recipent, amount=1.0, sender=owner):
     """Append a new value as well as last value"""
     Transaction = {"Sender": sender, "Recipent": recipent, "Amount": amount}
     openTransaction.append(Transaction)
 
 
 def addBlock():
-    pass
+    lastBlock = blockchain[-1]
+    transactions = openTransaction
+    block = {
+        "Previous-hash": "xyz",
+        "Index": len(blockchain),
+        "Transactions": transactions,
+    }
+    blockchain.append(block)
 
 
 def verifyChain():
@@ -63,8 +71,10 @@ while waitingForInput:
 
     if userChoice == "1":
         """This function adds the block to the blockchain"""
-        txData=getInput()
-        addTransaction(txData, getTheValueOfPreviousBlock())
+        txData = getInput()
+        recipent, amount = txData
+        addTransaction(recipent, amount=amount, sender=owner)
+        print(openTransaction)
     elif userChoice == "2":
         """This is used to print the blocks"""
         printBlockchainELements()
