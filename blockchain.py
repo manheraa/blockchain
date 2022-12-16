@@ -2,6 +2,7 @@ GenisisBlock = {"Previous-hash": "", "Index": 0, "Transactions": []}
 blockchain = [GenisisBlock]
 openTransaction = []
 owner = "Manhera"
+partcipants={"Manhera"}
 """Here blockchain is an empty list which forms the chain in future"""
 
 def getTheValueOfPreviousBlock():
@@ -22,6 +23,8 @@ def addTransaction(recipent, amount=1.0, sender=owner):
     """Append a new value as well as last value"""
     Transaction = {"Sender": sender, "Recipent": recipent, "Amount": amount}
     openTransaction.append(Transaction)
+    partcipants.add(sender)
+    partcipants.add(recipent)
 
 def hashBlock(block):
     
@@ -37,12 +40,23 @@ def mineBlock():
         "Transactions": openTransaction,
     }
     blockchain.append(block)
+def blockchainBalance(partcipants):
+    txSender=[[tx["Amount"] for tx in block["Transactions"] if tx["Sender"]==partcipants]for block in blockchain ]
+    amountSent=0
+    txRecipent=[[tx["Amount"] for tx in block["Transactions"] if tx["Recipent"]==partcipants]for block in blockchain ]
+    amountRecieved=0
+    for tx in txRecipent:
+        if len(tx)>0:
+            amountRecieved+=tx[0]
+    for tx in txSender:
+        if len(tx)>0:
+            amountSent+=tx[0]
+    return amountRecieved-amountSent
+        
     
 
 def verifyChain():
 
-    isValid = True
-    
     for (index,block) in enumerate(blockchain): 
         if index==0:
             continue
@@ -64,7 +78,7 @@ waitingForInput = True
 while waitingForInput:
     """Choose the value to perform any function"""
     userChoice = input(
-        " 1.To add a new block \n 2.TO print the blocks\n 3.Press h to Manupliate the blockchain \n 4.Press 4 to mine a new block \n 5.Press q to exit to exit:"
+        " 1.To add a new Transaction \n 2.TO print the blocks\n 3.Press 3 to mine the block\n 4.Press 4 to Manupliate the blockchain \n 5.Press 5 to display all the partcipants in transactions\n 6.Press q to exit to exit:"
     )
 
     if userChoice == "1":
@@ -80,11 +94,13 @@ while waitingForInput:
         mineBlock()
         openTransaction=[]
         
-    elif userChoice == "h":
+    elif userChoice == "4":
         if len(blockchain) >= 2:
             blockchain[0] = {"Previous-hash": "", "Index": 0, "Transactions": [{"Sender":"jhon","Recipent":"akjffl","Amount":213}]}
         else:
             print("Not Possible")
+    elif userChoice=="5":
+        print(partcipants)
     elif userChoice == "q":
         waitingForInput = False
 
@@ -93,7 +109,8 @@ while waitingForInput:
     if not verifyChain():
         print("Invalid chain!")
         break
-
+    else:
+        print(blockchainBalance(owner))
 else:
     print("User Left!")
 print("Completed")
