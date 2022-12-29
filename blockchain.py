@@ -1,3 +1,4 @@
+MININGREWARD=50
 GenisisBlock = {"Previous-hash": "", "Index": 0, "Transactions": []}
 blockchain = [GenisisBlock]
 openTransaction = []
@@ -18,13 +19,15 @@ def getInput():
     txAmount = float(input("Enter  the transaction amount:"))
     return txRecipent, txAmount
 
-
 def addTransaction(recipent, amount=1.0, sender=owner):
     """Append a new value as well as last value"""
-    Transaction = {"Sender": sender, "Recipent": recipent, "Amount": amount}
-    openTransaction.append(Transaction)
-    partcipants.add(sender)
-    partcipants.add(recipent)
+    Transaction= {"Sender": sender, "Recipent": recipent, "Amount": amount}  
+    if(verifyTransaction(Transaction)):
+        openTransaction.append(Transaction)
+        partcipants.add(sender)
+        partcipants.add(recipent)
+    else:
+        print("NOT ENOUGH COINS")
 
 def hashBlock(block):
     
@@ -33,6 +36,8 @@ def hashBlock(block):
 def mineBlock():
     lastBlock = blockchain[-1]
     previousHash=hashBlock(lastBlock)
+    rewardTransaction={"Sender":"MINING","Recipent":owner,"Amount":MININGREWARD}
+    openTransaction.append(rewardTransaction)
     print(previousHash)
     block = {
         "Previous-hash": previousHash,
@@ -53,6 +58,13 @@ def blockchainBalance(partcipants):
             amountSent+=tx[0]
     return amountRecieved-amountSent
         
+def verifyTransaction(Transactions):
+    senderBalance=blockchainBalance(Transactions["Sender"])
+    if senderBalance>=Transactions["Amount"]:
+        return True
+    else:
+        return False
+    
     
 
 def verifyChain():
@@ -114,4 +126,3 @@ while waitingForInput:
 else:
     print("User Left!")
 print("Completed")
- 
